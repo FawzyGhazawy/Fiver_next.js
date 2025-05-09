@@ -28,7 +28,7 @@ export default defineSchema({
         gigId: v.id("gigs"),
         comment: v.string(),
         communication_level: v.number(),
-        recomment_to_a_friend: v.number(),
+        recommend_to_a_friend: v.number(),
         service_as_described: v.number(),
     })
     .index("by_sellerId", ["sellerId"])
@@ -83,7 +83,7 @@ export default defineSchema({
             v.literal("Premium")
         ),
         price: v.number(),
-        delibery_days: v.number(),
+        delivery_days: v.number(),
         revisions: v.number(),
         stripePriceId: v.string(),
     })
@@ -112,7 +112,7 @@ export default defineSchema({
     categories: defineTable({
         name: v.string(),
     }),
-    subCategories: defineTable({
+    subcategories: defineTable({
         categoryId: v.id("categories"),
         name: v.string(),
     })

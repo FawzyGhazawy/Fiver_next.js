@@ -14,8 +14,8 @@ import { toast } from "sonner";
 import { api } from "@/convex/_generated/api";
 import { useQuery } from "convex/react";
 import { JSXElementConstructor, Key, ReactElement, ReactNode, ReactPortal, useState } from "react";
-import { Doc, Id } from "convex/_generated/dataModel";
-import { useApiMutation} from "@/hooks/use-api-useApiMutation";
+import { Doc, Id } from "@/convex/_generated/dataModel";
+import { useApiMutation} from "@/hooks/use-api-mutation";
 import { useRouter } from "next/navigation";
 
 
@@ -64,26 +64,26 @@ export const CreateForm = ({ username }: CreateFormProps) => {
 
     function handleCategoryChange(categoryName: string) {
         if(categoryName === undefined) return;
-        const selectedCategory = categories.find((category) => category.name === categoryName);
+        const selectedCategory = categories?.find((category) => category.name === categoryName);
         if(selectedCategory){
             setSubcategories(selectedCategory.subcategories);
         }
 
-        function onSubmit(data : createFormValues) {
-            mutate({
-                title: data.title,
-                description: "",
-                subCategoryId: data.subcategoryId,
-            }).then((gigId : Id<"gigs">) => {
-                toast.info("Gig created successfully.");
-                router.push(`/seller/${username}/manage-gigs/edit/${gigId}`);
-    })
-    .catch((error: { message: string; }) => {
-        toast.error("Error creating gig: " + error.message);
-    })
-
 }
-   }
+
+function onSubmit(data: createFormValues) {
+    mutate({
+        title: data.title,
+        description: "",
+        subCategoryId: data.subcategoryId,
+    }).then((gigId: Id<"gigs">) => {
+        toast.info("Gig created successfully.");
+        router.push(`/seller/${username}/manage-gigs/edit/${gigId}`);
+    })
+    .catch((error: { message: string }) => {
+        toast.error("Error creating gig: " + error.message);
+    });
+}
 
    return(
     <Form {...form}>
@@ -124,7 +124,7 @@ export const CreateForm = ({ username }: CreateFormProps) => {
                 </FormControl>
                 {categories && (<SelectContent>
                     {categories.map((category) => (
-                        <SelectItem key={category.id} value={String(category.name)}>
+                        <SelectItem key={category._id} value={String(category.name)}>
                             {category.name}
                         </SelectItem>
                     ))}
@@ -152,19 +152,21 @@ export const CreateForm = ({ username }: CreateFormProps) => {
                         </SelectTrigger>
                     </FormControl>
                     <SelectContent>
-                        {subcategories.map((subcategory, index)) => (
+                        {subcategories.map((subcategory, index) => (
                             <SelectItem key={index} value={String(subcategory._id)}>
                                 {subcategory.name}
                                 </SelectItem>
-   )}
+   ))}
                     </SelectContent>
 
                 </Select>
                 <FormDescription>
                     Subcategories will help buyers pinpoint your service more narrowly.
+                </FormDescription>
                 <FormMessage />
             </FormItem>
         )}
+        />
         <Button type="submit" disabled={pending}>Save</Button>
 
         </form>
